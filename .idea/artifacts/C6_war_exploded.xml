@@ -1,0 +1,18 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="C6:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/C6_war_exploded</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="C6" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="druid-1.0.26" />
+          <element id="library" level="module" name="JUnit4" module-name="C6" />
+          <element id="library" level="project" name="fastjson-1.2.47" />
+        </element>
+      </element>
+      <element id="javaee-facet-resources" facet="C6/web/Web" />
+    </root>
+  </artifact>
+</component>

@@ -1,0 +1,222 @@
+<html>
+<head>
+    <title>易圣通课堂练习</title>
+    <meta charset="utf-8">
+    <style>
+        .username.ng-valid {
+            background-color: lightgreen;
+        }
+
+        .username.ng-dirty.ng-invalid-required {
+            background-color: red;
+        }
+
+        .username.ng-dirty.ng-invalid-minlength {
+            background-color: yellow;
+        }
+
+        .email.ng-valid {
+            background-color: lightgreen;
+        }
+
+        .email.ng-dirty.ng-invalid-required {
+            background-color: red;
+        }
+
+        .email.ng-dirty.ng-invalid-email {
+            background-color: yellow;
+        }
+
+    </style>
+    <script type="text/javascript" src="js/jquery-1.11.0.js"></script>
+
+    <script>
+        function show() {
+            $.ajax({
+                url: "/user?action=show",
+                datatype: "text json",
+                type: "post",
+                statusCode: {
+                    200: function (data) {
+                        var i = 0
+                        $("#msg>tbody").empty()
+                        $.each(JSON.parse(data), function (index, value) {
+                            var str = ""
+                            str = "<tr><td>" + (++i) + "</td>" +
+                                "<td>" + value.username + "</td><td>" + value.password + "</td>" +
+                                "<td><input type='button' onclick='updata(" + value.id + ")' class=\"btn btn-success custom-width\" value='编辑'>\n" +
+                                "   <input type='button' onclick='del(" + value.id + ")'  class=\"btn btn-danger custom-width\" value='删除'></td></tr>>"
+                            $("#msg").append(str)
+                        })
+                    }
+                }
+            })
+        }
+
+        function del(id) {
+            $.ajax({
+                url: "/user",
+                data: "action=del&id=" + id,
+                type: "post",
+                statusCode: {
+                    200: function (data) {
+                        show()
+                    }
+                }
+            })
+        }
+
+        function updata(id) {
+            $.ajax({
+                url: "/user",
+                data: "action=queryOne&id=" + id,
+                dateType: "text json",
+                type: "post",
+                statusCode: {
+                    200: function(data){
+                      newdata=JSON.parse(data)
+                      alert(newdata)
+                      $("#username").val(newdata.username)
+                      $("#password").val(newdata.password)
+                      $("#action").val("update")
+                      $("#id").val(newdata.id)
+                    }
+                  }
+           })
+        }
+
+    </script>
+    <--! 加载时候首先调用show方法 -->
+    <script>
+        // alert("数据已经传过来了")
+        //$(show())//以上这两句组合起来好使
+        //$(show())//单独一句会出问题
+
+        $(function () {
+            show()
+        });
+    </script>
+
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link href="css/app.css" rel="stylesheet"/>
+</head>
+
+
+<body>
+<div class="generic-container">
+    <div class="panel panel-default">
+        <div class="panel-heading"><span class="lead">注册用户 </span></div>
+        <div class="formcontainer">
+
+            <form name="myForm" class="form-horizontal" id="form1"
+                  action="/user"
+                  method="post">
+
+
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label class="col-md-2 control-lable">姓名</label>
+                        <div class="col-md-7">
+
+                            <input type="hidden" name="action" id="action"
+                                   value="add"/>
+                            <input type="hidden" name="id" id="id"
+                                   value=""/>
+                            <input type="text" name="username" id="username"
+                                   value=""
+                                   class="username form-control input-sm"
+                                   placeholder="输入你的姓名"/>
+
+                            <div class="has-error">
+                                <span id="uerror" class="hidden">用户名有误</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label class="col-md-2 control-lable">密码</label>
+                        <div class="col-md-7">
+                            <input type="text" name="password" id="password"
+                                   value=""
+                                   class="password form-control input-sm"
+                                   placeholder="输入你的密码"
+                            />
+                            <div class="has-error">
+                                <span id="perror" class="hidden">密码有误</span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="form-actions floatRight">
+                        <input type="button" id="add"
+                               value="提交"
+                               class="btn btn-primary btn-sm"
+                        >
+                        <button type="button" id="rst"
+                                class="btn btn-warning btn-sm">复原
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <script>
+
+                $("#add").click(function () {
+                    var uv = $("#username").val();
+                    if ($.trim(uv) == "" || uv.length == 0) {
+                        $("#uerror").attr("class", "");
+                        return;
+                    } else {
+                        $("#uerror").attr("class", "hidden");
+                    }
+
+                    var pv = $("#password").val();
+                    if ($.trim(pv) == "" || pv.length == 0) {
+                        $("#perror").attr("class", "");
+                        return;
+                    } else {
+                        $("#perror").attr("class", "hidden");
+                    }
+
+                    $("#form1").submit()
+
+                })
+
+            </script>
+
+
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading"><span class="lead">用户列表 </span></div>
+        <div class="tablecontainer">
+            <table class="table table-hover" id="msg">
+                <thead>
+                <tr>
+                    <th>ID.</th>
+                    <th>用户名</th>
+                    <th>密码</th>
+                    <th width="20%">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>
